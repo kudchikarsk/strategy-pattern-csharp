@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace strategy_pattern_csharp
+namespace Example2
 {
     class Program
     {
@@ -16,23 +16,57 @@ namespace strategy_pattern_csharp
 
         }
 
-        public class PaymentService
+        // This becomes our IStrategy interface
+        public interface IPaymentMethod
+        {
+            PaymentResult Process(PaymentRequest request);
+        }
+
+
+        //A Strategy that implements IStrategy interface
+        public class CashOnDelivery : IPaymentMethod
+        {
+            public PaymentResult Process(PaymentRequest request)
+            {
+                Console.WriteLine("Paid with cash on delivery");
+                return null;
+            }
+        }
+
+        //Another Strategy that implements IStrategy interface
+        public class CreditCardPayment : IPaymentMethod
+        {
+            public PaymentResult Process(PaymentRequest request)
+            {
+                Console.WriteLine("Paid with credit card");
+                return null;
+            }
+        }
+
+
+        public interface IPaymentService
+        {
+            PaymentResult Pay(PaymentRequest request);
+        }
+
+        //The context class that executes the strategy applicable based on user choice
+        public class PaymentService : IPaymentService
         {
             public PaymentResult Pay(PaymentRequest request)
             {
+
+                IPaymentMethod paymentMethod = null;
                 switch (request.PaymentMethodChoice)
                 {
                     case PaymentMethodChoice.CashOnDelivery:
-                        //Here our payment operation will get execute
-                        Console.WriteLine("Paid with cash on delivery");
-                        return null;
+                        paymentMethod = new CashOnDelivery();
+                        break;
                     case PaymentMethodChoice.CreditCardPayment:
-                        //Here our payment operation will get execute
-                        Console.WriteLine("Paid with credit card");
-                        return null;
+                        paymentMethod = new CreditCardPayment();
+                        break;
                 }
 
-                throw new Exception("Failed to process payment request!");
+                return paymentMethod.Process(request);
             }
         }
 
@@ -67,11 +101,10 @@ namespace strategy_pattern_csharp
                     return;
             }
 
-            var paymentService = new PaymentService();
+            IPaymentService paymentService = new PaymentService();
             var result = paymentService.Pay(paymentRequest);
 
             Console.ReadLine();
         }
     }
 }
- 
