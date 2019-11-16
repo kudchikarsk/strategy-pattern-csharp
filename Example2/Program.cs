@@ -4,107 +4,55 @@ namespace Example2
 {
     class Program
     {
-        public enum PaymentMethodChoice { CashOnDelivery, CreditCardPayment }
-
-        public class PaymentRequest
+        // The strategy interface
+        public interface ITranslationStrategy
         {
-            public PaymentMethodChoice PaymentMethodChoice { get; set; }
+            string Translate(string phrase);
         }
-
-        public class PaymentResult
+        // American strategy implementation
+        public class AmericanTranslationStrategy : ITranslationStrategy
         {
-
-        }
-
-        // This becomes our IStrategy interface
-        public interface IPaymentMethod
-        {
-            PaymentResult Process(PaymentRequest request);
-        }
-
-
-        //A Strategy that implements IStrategy interface
-        public class CashOnDelivery : IPaymentMethod
-        {
-            public PaymentResult Process(PaymentRequest request)
+            
+            public string Translate(string phrase)
             {
-                Console.WriteLine("Paid with cash on delivery");
-                return null;
+                return phrase + ", bro";
             }
         }
 
-        //Another Strategy that implements IStrategy interface
-        public class CreditCardPayment : IPaymentMethod
+        // Australian strategy implementation
+        public class AustralianTranslationStrategy : ITranslationStrategy
         {
-            public PaymentResult Process(PaymentRequest request)
+            
+            public string Translate(string phrase)
             {
-                Console.WriteLine("Paid with credit card");
-                return null;
+                return phrase + ", mate";
             }
         }
 
-
-        public interface IPaymentService
+        // The main class which exposes a translate method
+        public class EnglishTranslation
         {
-            PaymentResult Pay(PaymentRequest request);
-        }
-
-        //The context class that executes the strategy applicable based on user choice
-        public class PaymentService : IPaymentService
-        {
-            public PaymentResult Pay(PaymentRequest request)
+            // translate a phrase using a given strategy
+            public static string Translate(string phrase, ITranslationStrategy strategy)
             {
+                return strategy.Translate(phrase);
+            }
 
-                IPaymentMethod paymentMethod = null;
-                switch (request.PaymentMethodChoice)
-                {
-                    case PaymentMethodChoice.CashOnDelivery:
-                        paymentMethod = new CashOnDelivery();
-                        break;
-                    case PaymentMethodChoice.CreditCardPayment:
-                        paymentMethod = new CreditCardPayment();
-                        break;
-                }
+            // example usage
+            static void Main(string[] args)
+            {
+                // translate a phrase using the AustralianTranslationStrategy class
+                string aussieHello = Translate("Hello", new AustralianTranslationStrategy());
+                Console.WriteLine(aussieHello);
+                // Hello, mate
+                // translate a phrase using the AmericanTranslationStrategy class
+                string usaHello = Translate("Hello", new AmericanTranslationStrategy());
+                Console.WriteLine(usaHello);
+                // Hello, bro
 
-                return paymentMethod.Process(request);
+                Console.ReadLine();
             }
         }
 
-        static void Main(string[] args)
-        {
-            var paymentRequest = new PaymentRequest();
-            var choice = String.Empty;
-            do
-            {
-                Console.WriteLine("Please select mode of payment:");
-                Console.WriteLine("1. CASH ON DELIVERY");
-                Console.WriteLine("2. PAY WITH CREDIT CARD");
-                Console.WriteLine("3. CANCEL");
-                choice = Console.ReadLine();
-            }
-            while (choice != "1" && choice != "2" && choice != "3");
-
-            switch (choice)
-            {
-                case "1":
-                    paymentRequest.PaymentMethodChoice
-                        = PaymentMethodChoice.CashOnDelivery;
-                    break;
-
-                case "2":
-                    paymentRequest.PaymentMethodChoice
-                        = PaymentMethodChoice.CreditCardPayment;
-                    break;
-
-                default:
-                    Console.WriteLine("Payment request canceled");
-                    return;
-            }
-
-            IPaymentService paymentService = new PaymentService();
-            var result = paymentService.Pay(paymentRequest);
-
-            Console.ReadLine();
-        }
     }
 }

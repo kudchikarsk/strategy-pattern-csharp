@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B9CFD617-C087-48F4-8D0F-B9ED1F0D5608}</ProjectGuid>
+    <ProjectGuid>{842E3D00-7B3E-44D2-949A-6A5406E421C2}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>strategy_pattern_csharp</RootNamespace>
-    <AssemblyName>strategy-pattern-csharp</AssemblyName>
+    <RootNamespace>Example1</RootNamespace>
+    <AssemblyName>Example1</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

@@ -1,156 +1,75 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Example4
 {
     public class Program
     {
-
-        public class PaymentRequest
+        public interface ICommunicateInterface
         {
-            public string PaymentMethodChoice { get; set; }
+            string Communicate(string destination);
         }
 
-        public class PaymentResult
+        public class CommunicateViaPhone : ICommunicateInterface
         {
-
-        }
-
-        public class CancelRequest : IPaymentMethod
-        {
-
-            public string Name => "CANCEL";
-
-            public PaymentResult Process(PaymentRequest request)
+            public string Communicate(string destination)
             {
-                Console.WriteLine("Request cancelled!");
-                return null;
+                return "communicating " + destination + " via Phone..";
             }
         }
 
-        public interface IPaymentMethod
+        public class CommunicateViaEmail : ICommunicateInterface
         {
-            string Name { get; }
-
-            PaymentResult Process(PaymentRequest request);
-        }
-
-        public class CashOnDelivery : IPaymentMethod
-        {
-
-            public string Name => "CASH ON DELIVERY";
-
-            public PaymentResult Process(PaymentRequest request)
+            public string Communicate(string destination)
             {
-                Console.WriteLine("Paid with cash on delivery");
-                return null;
+                return "communicating " + destination + " via Email..";
             }
         }
 
-        public class CreditCardPayment : IPaymentMethod
+        public class CommunicateViaVideo : ICommunicateInterface
         {
-
-            public string Name => "PAY WITH CREDIT CARD";
-
-            public PaymentResult Process(PaymentRequest request)
+            public string Communicate(string destination)
             {
-                Console.WriteLine("Paid with credit card");
-                return null;
+                return "communicating " + destination + " via Video..";
             }
         }
 
-        public class WireTransferPayment : IPaymentMethod
+        public class CommunicationService
         {
-
-            public string Name => "PAY WITH WIRE TRANSFER";
-
-            public PaymentResult Process(PaymentRequest request)
+            private Func<string, string> communcationMeans;
+            public void SetCommuncationMeans(Func<string, string> communcationMeans)
             {
-                Console.WriteLine("Paid with wire transfer");
-                return null;
+                this.communcationMeans = communcationMeans;
             }
-        }
-
-        public interface IPaymentService
-        {
-            PaymentResult Pay(PaymentRequest request);
-        }
-
-        public class PaymentService : IPaymentService
-        {
-            private readonly PaymentResolver paymentResolver;
-
-            public PaymentService(PaymentResolver paymentResolver)
+            public void Communicate(string destination)
             {
-                this.paymentResolver = paymentResolver;
-            }
-
-            public PaymentResult Pay(PaymentRequest request)
-            {
-
-                IPaymentMethod paymentMethod = paymentResolver.Resolve(request.PaymentMethodChoice);
-                return paymentMethod.Process(request);
+                var communicate = communcationMeans(destination);
+                Console.WriteLine(communicate);
             }
         }
 
         static void Main(string[] args)
         {
-            var paymentRequest = new PaymentRequest();
-            var paymentMethods = new List<IPaymentMethod>()
-            {
-                new CashOnDelivery(),
-                new CreditCardPayment(),
-                new WireTransferPayment(),
-                new CancelRequest()
-            };
+            string communicateViaEmail(string destination) => "communicating " + destination + " via Email..";
+            string communicateViaPhone(string destination) => "communicating " + destination + " via Phone..";
+           
 
-
-            int choice;
-            string paymentMethodChoice = null;
-            do
-            {
-                Console.WriteLine("Please select mode of payment:");
-                var i = 1;
-                foreach (var paymentMethod in paymentMethods)
-                {
-                    Console.WriteLine($"{i} {paymentMethod.Name}");
-                    i++;
-                }
-                var input = Console.ReadLine();
-                try
-                {
-                    choice = Convert.ToInt32(input);
-                    choice--;
-                    paymentMethodChoice = paymentMethods.ElementAtOrDefault(choice)?.Name;
-                }
-                catch (Exception) { }
-
-            }
-            while (paymentMethodChoice == null);
-
-            paymentRequest.PaymentMethodChoice = paymentMethodChoice;
-            var resolver = new PaymentResolver(paymentMethods);
-            IPaymentService paymentService = new PaymentService(resolver);
-            var result = paymentService.Pay(paymentRequest);
+            CommunicationService communicationService = new CommunicationService();
+            // via phone
+            communicationService.SetCommuncationMeans(communicateViaPhone);
+            communicationService.Communicate("1234567");
+            // via email
+            communicationService.SetCommuncationMeans(communicateViaEmail);
+            communicationService.Communicate("hi@me.com");
+            //via Video
+            communicationService.SetCommuncationMeans((string destination) => "communicating " + destination + " via Video..");
+            communicationService.Communicate("1234567");
 
             Console.ReadLine();
 
-        }
-
-        public class PaymentResolver
-        {
-            private IEnumerable<IPaymentMethod> paymentMethods;
-
-            public PaymentResolver(IEnumerable<IPaymentMethod> paymentMethods)
-            {
-                this.paymentMethods = paymentMethods;
-            }
-
-            public IPaymentMethod Resolve(string paymentMethodChoice)
-            {
-                return paymentMethods.FirstOrDefault(p => p.Name == paymentMethodChoice);
-            }
         }
     }
 }
