@@ -60,6 +60,18 @@ namespace Example4
             }
         }
 
+        public class WireTransferPayment : IPaymentMethod
+        {
+
+            public string Name => "PAY WITH WIRE TRANSFER";
+
+            public PaymentResult Process(PaymentRequest request)
+            {
+                Console.WriteLine("Paid with wire transfer");
+                return null;
+            }
+        }
+
         public interface IPaymentService
         {
             PaymentResult Pay(PaymentRequest request);
@@ -86,11 +98,12 @@ namespace Example4
         {
             var paymentRequest = new PaymentRequest();
             var paymentMethods = new List<IPaymentMethod>()
-        {
-            new CashOnDelivery(),
-            new CreditCardPayment(),
-            new CancelRequest()
-        };
+            {
+                new CashOnDelivery(),
+                new CreditCardPayment(),
+                new WireTransferPayment(),
+                new CancelRequest()
+            };
 
 
             int choice;
@@ -123,6 +136,21 @@ namespace Example4
 
             Console.ReadLine();
 
+        }
+
+        public class PaymentResolver
+        {
+            private IEnumerable<IPaymentMethod> paymentMethods;
+
+            public PaymentResolver(IEnumerable<IPaymentMethod> paymentMethods)
+            {
+                this.paymentMethods = paymentMethods;
+            }
+
+            public IPaymentMethod Resolve(string paymentMethodChoice)
+            {
+                return paymentMethods.FirstOrDefault(p => p.Name == paymentMethodChoice);
+            }
         }
     }
 }
