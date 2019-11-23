@@ -1,4 +1,4 @@
-# Strategy pattern In C# Demo
+# Strategy Pattern In C# Demo
 
 This solution is a part of my blog post [Strategy Design Pattern In C#](https://kudchikarsk.com/strategy-pattern-csharp/)
 
