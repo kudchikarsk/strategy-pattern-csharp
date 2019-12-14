@@ -1,6 +1,6 @@
 # Strategy Pattern In C# Demo
 
-This solution is a part of my blog post [Strategy Design Pattern In C#](https://kudchikarsk.com/strategy-pattern-csharp/)
+This solution is a part of my blog post [Strategy Design Pattern In C#](https://codewithshadman.com/strategy-pattern-csharp/)
 
 
 Solution contains various Windows Forms App / Console App Project for different Strategy pattern concepts in C#.
